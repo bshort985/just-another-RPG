@@ -1,5 +1,7 @@
 const Potion = require("../lib/Potion.js");
 
+
+
 test("creates a random potion object", () => {
     const potion = new Potion();
 
@@ -8,3 +10,4 @@ test("creates a random potion object", () => {
     expect(potion.value).toEqual(expect.any(Number)); 
     
 });
+
