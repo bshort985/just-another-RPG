@@ -1,5 +1,5 @@
 function Potion(name){
-    this.types = ["strength", "agility", "health"]
+    this.types = ["strength", "agility", "health"];
     this.name = name || this.types[Math.floor(Math.random() * this.types.length)];
 
     if (name === "health") {
@@ -9,6 +9,5 @@ function Potion(name){
     }
 };
 
-console.log(potion);
 
 module.exports = Potion;
