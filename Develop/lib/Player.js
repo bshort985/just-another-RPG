@@ -10,6 +10,10 @@ function Player(name = "") {
     this.agility = Math.floor(Math.random() * 5 + 7);
 
     this.inventory = [new Potion("health"), new Potion()];
+    
+    Player.prototype.getHealth = function() {
+        return `${this.name}'s health is now ${this.health}!`;
+    };
 
     // returns an object with various player properties
 
@@ -85,9 +89,7 @@ function Player(name = "") {
     };
 };
 
-Player.prototype.getHealth = function() {
-    return `${this.name}'s health is now ${this.health}!`;
-};
+
 
 
 module.exports = Player;
