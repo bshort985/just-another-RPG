@@ -53,24 +53,6 @@ Game.prototype.initializeGame = function() {
             this.battle();
           };
 
-        // If Player turn:
-
-// Prompt user to attack or use a Potion
-
-// If using a Potion:
-
-// Display list of Potion objects to user
-
-// Apply selected Potion effect to Player
-
-// If attacking:
-
-// Subtract health from the Enemy based on Player attack value
-
-// If Enemy turn:
-
-
-
 Game.prototype.battle = function() {
     if (this.isPlayerTurn) {
         inquirer
@@ -85,7 +67,7 @@ Game.prototype.battle = function() {
                 // check for an empty inventory before trying to display choices to the user. If the inventory is empty, immediately return to end the Player turn. 
                 if (!this.player.getInventory()) {
                     console.log("You don't have any potions!");
-                    return;
+                    return this.checkEndOfBattle();
                 }
 
                 inquirer
@@ -104,6 +86,7 @@ Game.prototype.battle = function() {
                             const potionDetails = action.split(": ");
                             this.player.usePotion(potionDetails[0] - 1);
                             console.log(`You used a ${potionDetails[1]} potion.`);
+                            this.checkEndOfBattle();
                         });
 
             }
@@ -114,6 +97,7 @@ Game.prototype.battle = function() {
 
                 console.log(`You attacked the ${this.currentEnemy.name}`);
                 console.log(this.currentEnemy.getHealth());
+                this.checkEndOfBattle();
             }
         });
     } 
@@ -123,7 +107,47 @@ Game.prototype.battle = function() {
 
         console.log(`You were attacked by the ${this.currentEnemy.name}`);
         console.log(this.player.getHealth());
+        this.checkEndOfBattle();
     }
+};
+
+// The inquirer prompts are asynchronous, so we must wait for their promises to be resolved and perform our "end turn" logic in their callbacks.
+// After each promise we need to call the end turn logic.
+
+Game.prototype.checkEndOfBattle = function() {
+
+    // verify if both characters are alive and can continue fighting. If so, we should switch the turn order and run battle() again.
+
+    if (this.player.isAlive() && this.currentEnemy.isAlive()) {
+        this.isPlayerTurn = !this.isPlayerTurn;
+        this.battle(); 
+    } 
+
+    // Player is still alive but the Enemy has been defeated. If this is the case, the Player is awarded a Potion, and the roundNumber increases.
+    // if there are no more enemies to fight, then the Player has won the overall game. Otherwise, a new battle should start.
+
+    else if (this.player.isAlive() && !this.currentEnemy.isAlive()){
+        console.log(`You've defeated the ${this.currentEnemy.name}`);
+
+        this.player.addPotion(this.currentEnemy.potion);
+
+        console.log(`${this.player.name} found a ${this.currentEnemy.potion.name} potion`);
+
+        this.roundNumber++;
+
+        if (this.roundNumber < this.enemies.length) {
+            this.currentEnemy = this.enemies[this.roundNumber];
+            this.startNewBattle();
+        }
+
+        else{
+            console.log(`You Win!`);
+        }
+    }
+    
+    else {
+        console.log("You've been defeated!");
+      }
 };
 
 
